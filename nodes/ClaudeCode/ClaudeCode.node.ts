@@ -5,7 +5,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
-import { query, type SDKMessage } from '@anthropic-ai/claude-code';
+import { query, type SDKMessage, type SettingSource } from '@anthropic-ai/claude-agent-sdk';
 
 export class ClaudeCode implements INodeType {
 	description: INodeTypeDescription = {
@@ -327,7 +327,8 @@ export class ClaudeCode implements INodeType {
 						maxTurns: number;
 						permissionMode: 'default' | 'acceptEdits' | 'bypassPermissions' | 'plan';
 						model: string;
-						systemPrompt?: string;
+						systemPrompt?: string | { type: 'preset'; preset: 'claude_code'; append?: string };
+						settingSources?: SettingSource[];
 						mcpServers?: Record<string, any>;
 						allowedTools?: string[];
 						disallowedTools?: string[];
@@ -348,10 +349,16 @@ export class ClaudeCode implements INodeType {
 					},
 				};
 
-				// Add optional parameters
+				// Add system prompt - use Claude Code preset by default, or custom if provided
 				if (additionalOptions.systemPrompt) {
 					queryOptions.options.systemPrompt = additionalOptions.systemPrompt;
+				} else {
+					// Use Claude Code preset to restore default behavior from old SDK
+					queryOptions.options.systemPrompt = { type: 'preset', preset: 'claude_code' };
 				}
+
+				// Add setting sources to restore filesystem settings loading behavior
+				queryOptions.options.settingSources = ['user', 'project', 'local'] as SettingSource[];
 
 				// Add project path (cwd) if specified
 				if (projectPath && projectPath.trim() !== '') {
