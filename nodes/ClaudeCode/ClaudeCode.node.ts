@@ -63,6 +63,11 @@ export class ClaudeCode implements INodeType {
 				type: 'options',
 				options: [
 					{
+						name: 'Haiku',
+						value: 'haiku',
+						description: 'Fast and cost-effective model for simple tasks',
+					},
+					{
 						name: 'Sonnet',
 						value: 'sonnet',
 						description: 'Fast and efficient model for most tasks',
@@ -73,7 +78,7 @@ export class ClaudeCode implements INodeType {
 						description: 'Most capable model for complex tasks',
 					},
 				],
-				default: 'sonnet',
+				default: 'haiku',
 				description: 'Claude model to use',
 			},
 			{
@@ -200,6 +205,11 @@ export class ClaudeCode implements INodeType {
 								name: 'None',
 								value: '',
 								description: 'No fallback model',
+							},
+							{
+								name: 'Haiku',
+								value: 'haiku',
+								description: 'Fallback to Haiku when primary model is overloaded',
 							},
 							{
 								name: 'Sonnet',
